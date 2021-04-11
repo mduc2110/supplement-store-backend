@@ -3,11 +3,14 @@ const jwt = require("jsonwebtoken");
 module.exports = {
     adminAuth: (req, res, next) => {
         const token = req.header('access-token');
+        // next();
+        // res.status(200).send(token);
         if(!token) return res.status(401).send("Unauthorized");
+        // else next();
         try{
             const verified = jwt.verify(token, process.env.TOKEN_SECRET);
             req.user = verified;
-            if(verified.roles.roleName == 'ADMIN'){
+            if(verified.roles.roleName === 'ADMIN'){
                 next();
             }else{
                 return res.status(403).send("You don't have permission to access");
@@ -34,9 +37,10 @@ module.exports = {
         try{
             const verified = jwt.verify(token, process.env.TOKEN_SECRET);
             req.user = verified;
+            
             if(verified.roles.roleName == 'ADMIN'){
                 next();
-            }else if(verified.roles.roleName == 'MANAGER' && verified.roles.permission.includes("PRODUCT_CRUD")){
+            }else if(verified.roles.roleName == 'MANAGER' && verified.roles.permissions.includes("PRODUCT_CRUD")){
                 next();
             }else {
                 return res.status(403).send("You don't have permission to access");
@@ -46,7 +50,7 @@ module.exports = {
             res.status(400).send("Invalid token");
         }
     },
-    productRoles: (req, res, next) => {
+    categoryRoles: (req, res, next) => {
         const token = req.header('access-token');
         if(!token) return res.status(403).send("Unauthorized");
         try{

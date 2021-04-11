@@ -1,5 +1,4 @@
 const Role = require('../models/roleModels');
-const userController = require('./userController');
 
 module.exports = {
     create: async (req, res) => {

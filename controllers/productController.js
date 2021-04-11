@@ -3,7 +3,7 @@ const {urlConvert} = require('../utils/urlConvert');
 const fs = require('fs');
 module.exports = {
     create : async (req, res) => {
-        const imgPath = req.file.path;
+        const imgPath = [...req.files].map(item => item.path);
         const {
             productName,
             description,
@@ -12,8 +12,12 @@ module.exports = {
             discount,
             brand,
             options,
-            categories
+            categoryId
         } = req.body;
+        const parsedOptions = options.map(item => JSON.parse(item));
+        // res.status(200).json({
+        //     parsedOptions
+        // })
         try {
             const product = new Product(
                 {
@@ -24,19 +28,22 @@ module.exports = {
                     discount,
                     brand,
                     urlProduct: urlConvert(productName),
-                    options,
+                    options: parsedOptions,
                     imgUrl: imgPath,
-                    categories
+                    categories: categoryId
                 }
             );
             await product.save();
             res.status(201).json(product);
                 
         } catch (error) {
-            fs.unlink(imgPath, err => {
-                console.log({message: err});
-                return;
-            });
+            imgPath.forEach(img => {
+                fs.unlink(img, err => {
+                    console.log({message: err});
+                    return;
+                });
+            })
+            console.log(error.message);
             res.status(500).json({message: error.message});
         }
     },
@@ -50,9 +57,9 @@ module.exports = {
     },
     getOne : async (req, res) => {
         try {
-            const {_id} = req.params;
+            const {urlProduct} = req.params;
             const product = await Product.findOne({
-                _id
+                urlProduct
             })
             .populate('categories')
             .exec();;

@@ -16,6 +16,10 @@ module.exports = {
         str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
         str = str.replace(/Đ/g, "D");
         str = str.replace(/ /g,"-");
-        return str;
+        str = str.replace(/\(|\)|\.|\,/g,"-");
+        if(str[str.length-1] == '-'){
+            str = str.replace("-","");
+        }
+        return str.toLowerCase();
     }
 }

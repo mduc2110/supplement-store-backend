@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const options =  new mongoose.Schema({
-    opt: {
+    flavour: {
         type: String,
         required: true
     },
