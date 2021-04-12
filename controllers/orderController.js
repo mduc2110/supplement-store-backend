@@ -1,6 +1,14 @@
 const Order = require('../models/orderModel');
 const fetch = require('node-fetch');
 const axios = require('axios');
+
+const paypal = require('paypal-rest-sdk');
+
+paypal.configure({
+    'mode': 'sandbox',
+    'client_id': process.env.PAYPAL_CLIENT_ID,
+    'client_secret': process.env.PAYPAL_CLIENT_SECRET
+})
 module.exports = {
     getAll: async (req, res) => {
 
@@ -111,3 +119,5 @@ module.exports = {
         }
     }
 }
+
+// eLw.4d5nSg4WKz!

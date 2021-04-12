@@ -21,7 +21,13 @@ const OrderSchema = new mongoose.Schema({
         enum: ["PAYPAL", "COD"],
         default: "COD"
     },
-    to_address: {
+    to_name: {
+        type: String, required: true,
+    },
+    phone: {
+        type: String, required: true,
+    },
+    address: {
         type: String, required: true
     },
     province: {
