@@ -31,6 +31,10 @@ const ProductSchema = new mongoose.Schema({
     discount: {
         type: Number,
     },
+    weight: {
+        type: String,
+        required: true
+    },
     brand: {
         type: String
     },

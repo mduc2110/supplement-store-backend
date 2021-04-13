@@ -8,14 +8,13 @@ const {
     getAllByUser,
     getServices
 } = require('../controllers/orderController');
-const {userAuth, adminAuth} = require('../middlewares/checkAuth');
+const {userAuth, adminAuth, orderRoles} = require('../middlewares/checkAuth');
 const routes = express.Router();
 
-routes.get('/', getAll);
-routes.get('/available-services/:districtId', getServices);
+routes.get('/', orderRoles, getAll);
 routes.get('/orders',userAuth,  getAllByUser);
 routes.get('/:order_code', getOne);
-routes.post('/', create);
+routes.post('/', userAuth, create);
 routes.delete('/:order_code', remove);
 routes.patch('/', update);
 

@@ -1,17 +1,12 @@
 const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema({
-    order_code: {
-        type: String,
-        required: true,
-        unique: true
-    },
     users: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'users'
     },
-    products: [],
+    items: [],
     total_amount: {
         type: Number,
         required: true
@@ -44,8 +39,11 @@ const OrderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["Submitted", "Cancelled", "Pending", "Shipping", "Done"],
-        default: "Submitted"
+        enum: ["Cancelled", "Pending", "Shipping", "Done"],
+        default: "Pending"
+    },
+    note: {
+        type: String
     },
     createdDate: {
         type: Date,

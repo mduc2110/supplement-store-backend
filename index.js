@@ -11,7 +11,6 @@ const roleRoutes = require('./routes/roleRoutes');
 const userRoutes = require('./routes/userRoutes');
 const addressRoutes = require('./routes/addressRoutes');
 const orderRoutes = require('./routes/orderRoutes');
-const deliveryAddress = require('./routes/deliveryAddress');
 
 app = express();
 app.use(morgan('dev'));
@@ -27,7 +26,6 @@ app.use('/api/roles', roleRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/address', addressRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/delivery-address', deliveryAddress);
 
 mongoose.connect(
     // 'mongodb+srv://vmd211099:123123@Cluster0.ojsbn.mongodb.net/supplements?retryWrites=true&w=majority',

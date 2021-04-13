@@ -10,6 +10,7 @@ module.exports = {
             importPrice,
             price,
             discount,
+            weight,
             brand,
             options,
             categoryId
@@ -26,6 +27,7 @@ module.exports = {
                     importPrice,
                     price,
                     discount,
+                    weight,
                     brand,
                     urlProduct: urlConvert(productName),
                     options: parsedOptions,
