@@ -15,24 +15,29 @@ module.exports = {
                 }
             })
             .exec();
-            delete user.password;
-            // const user = [...rest];
-            const formatRole = {
-                roleName: user.roles.roleName,
-                permissions: [...user.roles.permissions].map(item => item.permissionName)
-            };
-            const validPass = await bcrypt.compare(password, user.password);
-            if(validPass){
-                res.status(200).json(
-                    {
-                        'info': user,
-                        'token': jwt.sign({
-                            username: user.username, 
-                            _id: user._id,
-                            roles: formatRole
-                    },process.env.TOKEN_SECRET, {expiresIn: "12h"})});
-            }else {
-                res.status(400).json({message: "invalid password"});  
+            if(user) {
+
+                delete user.password;
+                // const user = [...rest];
+                const formatRole = {
+                    roleName: user.roles.roleName,
+                    permissions: [...user.roles.permissions].map(item => item.permissionName)
+                };
+                const validPass = await bcrypt.compare(password, user.password);
+                if(validPass){
+                    res.status(200).json(
+                        {
+                            'info': user,
+                            'token': jwt.sign({
+                                username: user.username, 
+                                _id: user._id,
+                                roles: formatRole
+                            },process.env.TOKEN_SECRET, {expiresIn: "12h"})});
+                        }else {
+                            res.status(400).json({message: "invalid password"});  
+                        }
+            }else{
+                res.status(400).json("Invalid username");
             }
         } catch (error) {
             res.status(500).json({message: error.message});
@@ -45,7 +50,7 @@ module.exports = {
                 username
             });
 
-            if(usernameExist) return res.status(400).send("Username already exists");
+            if(usernameExist) return res.status(400).json("Username already exists");
 
             const emailExist = await User.findOne({
                 email

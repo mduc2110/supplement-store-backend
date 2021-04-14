@@ -1,13 +1,8 @@
 const Order = require('../models/orderModel');
 const axios = require('axios');
+const Product = require('../models/productModels');
 
-const paypal = require('paypal-rest-sdk');
 
-paypal.configure({
-    'mode': 'sandbox',
-    'client_id': process.env.PAYPAL_CLIENT_ID,
-    'client_secret': process.env.PAYPAL_CLIENT_SECRET
-})
 module.exports = {
     getAll: async (req, res) => {
         try {
@@ -44,35 +39,6 @@ module.exports = {
             items
         } = req.body;
         try {
-            // const response = await axios.post('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward',{
-            //     payment_type_id,
-            //     note,
-            //     required_note: "KHONGCHOXEMHANG",
-            //     to_name,
-            //     to_phone,
-            //     to_address,
-            //     to_ward_code,
-            //     to_district_id,
-            //     cod_amount,
-
-            //     weight,
-            //     length: 0,
-            //     width: 0,
-            //     height: 0,
-            //     service_id,
-            //     service_type_id,
-            //     pick_shift: [2],
-            //     items
-            // },
-            // {
-            //     headers: {
-            //         "token" : process.env.GHN_TOKEN,
-            //         "Host" : process.env.HOST,
-            //         "Content-Type": "application/json",
-            //         "shop_id": process.env.SHOP_ID
-            //     }
-            // });
-            // const responseData = response.data;
             const order = new Order({
                 users: req.user._id,
                 total_amount,
@@ -88,19 +54,6 @@ module.exports = {
         } catch (error) {
             res.status(500).json({message: error.message});
         }
-        // fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward', {
-        //     method: 'POST',
-        //     body: JSON.stringify(),
-        //     headers: {
-        //         "token" : process.env.GHN_TOKEN,
-        //         "Host" : process.env.HOST,
-        //         "Content-Type": "application/json"
-        //     }
-        // })
-        // .then(res => res.json())
-        // .then(json => {
-
-        // })
     },
     update: async (req, res) => {
 
@@ -130,6 +83,94 @@ module.exports = {
             res.status(200).json(response.data);
         } catch (error) {
             res.status(500).json({message: error.message});
+        }
+    },
+    createOrder: async (req, res) => {
+        // res.status(200).json(req.body);
+        try {
+            const {
+                _id,
+                note,
+                to_name,
+                to_phone,
+                to_address,
+                to_ward_code,
+                to_district_id,
+                total_amount,
+                items
+            } = req.body;
+            console.log()
+            const response = await axios.post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create',JSON.stringify({
+                shop_id: process.env.SHOP_ID,
+                payment_type_id: 2,
+                note,
+                required_note: "KHONGCHOXEMHANG",
+                to_name,
+                to_phone,
+                to_address,
+                to_ward_code: to_ward_code.toString(),
+                to_district_id,
+                cod_amount: total_amount,
+
+                weight: 3000,
+                length: 0,
+                width: 0,
+                height: 0,
+                service_id: 53320,
+                service_type_id: 1,
+                pick_shift: [
+                    2
+                ],
+                items: items.map(item => {
+                    return {
+                        quantity: item.quantity,
+                        name: item.name,
+                        code: item.code,
+                        category: item.category
+                    }
+                })
+            }),
+            {
+                headers: {
+                    "token" : process.env.GHN_TOKEN,
+                    "Host" : process.env.HOST,
+                    "Content-Type": "application/json",
+                    "shop_id": process.env.SHOP_ID
+                }
+            });
+            console.log(_id);
+            const updatedOrder = await Order.updateOne({_id}, {
+                status: "Shipping"
+            });
+            console.log(updatedOrder);
+            // if(response.data.message === 'Success'){
+            //     items.forEach(async element =>  {
+            //         console.log(element);
+            //         const prd = await Product.findOne({
+            //                 _id: element._id
+            //             }
+            //         );
+            //         let modifiedQuant = 0;
+            //         prd.options.forEach(opt => {
+            //             console.log(opt.flavour + element.options);
+            //             if(opt.flavour === element.options){
+            //                 modifiedQuant = opt.quant - element.quantity
+            //             }
+            //         });
+            //         console.log(modifiedQuant);
+            //         await Product.updateOne(
+            //             {
+            //                 _id: element._id, 
+            //                 'options.flavour': element.options
+            //             },{
+            //                 'options.quant' : modifiedQuant
+            //             }
+            //         );
+            //     });
+            // }
+            res.status(200).json(response.data);
+        } catch (error) {
+            res.status(500).json({message: error.message}); 
         }
     }
 }
