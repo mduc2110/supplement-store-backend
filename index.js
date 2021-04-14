@@ -31,7 +31,7 @@ mongoose.connect(
     // 'mongodb+srv://vmd211099:123123@Cluster0.ojsbn.mongodb.net/supplements?retryWrites=true&w=majority',
     process.env.MONGO_URL,
     {useNewUrlParser: true, useUnifiedTopology: true})
-    .then(() => app.listen(3333, () => console.log("Server is running")))
+    .then(() => app.listen(process.env.PORT||3333, () => console.log("Server is running")))
     .catch(error => console.log(error.message));
 
 mongoose.set('useFindAndModify', false);
